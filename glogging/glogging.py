@@ -7,6 +7,7 @@ import sys
 import os
 from os.path import join as path_join
 
+FIVEMB = 5*1024*1024
 
 # escape codes for colours from:
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
@@ -34,7 +35,6 @@ LOG_LEVELS = {
 SCREEN_FORMAT = "%(asctime)s [%(levelname)s]  %(message)s " + "(" + \
                 STYLES['bright'] + "%(filename)s" + \
                 STYLES['reset'] + ":%(lineno)d)"
-
 FILE_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
 
 
@@ -86,7 +86,6 @@ class GLogging(object):
         self._setup_logging_levels()
 
         if logdir:
-
             self._setup_file_handler()
 
         if log_to_screen:
@@ -117,11 +116,9 @@ class GLogging(object):
         self.logger.addHandler(log_stream)
 
     def _setup_file_handler(self):
-        log_filename = path_join(self.log_dir,
-                                 '{}.log'.format(self.logger.name))
+        log_filename = path_join(self.log_dir, '{}.log'.format(self.logger.name))
         ensure_path_exists(log_filename)
-        log_filehandler = AllWriteRotatingFileHandler(
-            log_filename, 'a', 5 * 1024 * 1024, 10)
+        log_filehandler = AllWriteRotatingFileHandler(log_filename, 'a', FIVEMB, 10)
 
         formatter = logging.Formatter(FILE_FORMAT)
         log_filehandler.set_name('file')
