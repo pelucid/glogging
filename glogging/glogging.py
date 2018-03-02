@@ -78,7 +78,7 @@ class GLogging(object):
     file_format = FILE_FORMAT
 
     def __init__(self, logname="growthintel", logdir=None, log_to_screen=True,
-                 log_uncaught_exceptions=True, metrics=False):
+                 log_uncaught_exceptions=True, log_metrics=False):
         """Initialise logger with desired handlers.
 
         Arguments:
@@ -86,16 +86,17 @@ class GLogging(object):
             logdir (str): directory to log to - if none then no file handler created
             log_to_screen (bool): log to stream handler (stdout)
             log_uncaught_exceptions (bool): log uncaught exceptions
+            log_metrics (bool): Log memory metrics
         """
         self._logger = logging.getLogger(logname)
-        self._configure(logdir, log_to_screen, log_uncaught_exceptions, metrics)
+        self._configure(logdir, log_to_screen, log_uncaught_exceptions, log_metrics)
 
-    def _configure(self, logdir, log_to_screen, log_uncaught_exceptions, metrics):
+    def _configure(self, logdir, log_to_screen, log_uncaught_exceptions, log_metrics):
         # Logger already exists with configured handlers so just return
         if self._logger.handlers:
             return
 
-        if metrics:
+        if log_metrics:
             self._logger.addFilter(ResourceMetricsFilter())
             self.screen_format = SCREEN_METRICS_FORMAT
             self.file_format = FILE_METRICS_FORMAT
