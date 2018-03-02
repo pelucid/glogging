@@ -34,11 +34,15 @@ LOG_LEVELS = {
     'CRITICAL': STYLES['bright'] + COLOURS['yellow'] + COLOURS['back_red']
 }
 
-SCREEN_FORMAT = "%(asctime)s [%(levelname)s] %(message)s (" + \
-                STYLES['bright'] + "%(filename)s" + \
-                STYLES['reset'] + ":%(lineno)d)"
-FILE_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
+BASE = "%(asctime)s [%(levelname)s]"
+METRICS = "Mem:%(memory)s"
+MSG = "%(message)s"
+CODE = "("+ STYLES['bright'] + "%(filename)s" + STYLES['reset'] + ":%(lineno)d)"
 
+SCREEN_FORMAT = BASE + " " + MSG + " " + CODE
+SCREEN_METRICS_FORMAT = BASE + " " + METRICS + " - " + MSG + " " + CODE
+FILE_FORMAT = BASE + " " + MSG
+FILE_METRICS_FORMAT = BASE + " " + METRICS + " - " + MSG
 
 class ColouredFormatter(logging.Formatter):
     """Class for colouring logging messages."""
@@ -70,6 +74,8 @@ class GLogging(object):
     """Sensible logging class.
        Sets up coloured logging to screen and a file handler.
     """
+    screen_format = SCREEN_FORMAT
+    file_format = FILE_FORMAT
 
     def __init__(self, logname="growthintel", logdir=None, log_to_screen=True,
                  log_uncaught_exceptions=True, metrics=False):
@@ -89,14 +95,16 @@ class GLogging(object):
         if self._logger.handlers:
             return
 
+        if metrics:
+            self._logger.addFilter(ResourceMetricsFilter())
+            self.screen_format = SCREEN_METRICS_FORMAT
+            self.file_format = FILE_METRICS_FORMAT
+
         if logdir:
-            self._add_file_handler()
+            self._add_file_handler(logdir)
 
         if log_to_screen:
             self._add_stream_handler()
-
-        if metrics:
-            self._logger.addFilter(ResourceMetricsFilter)
 
         if log_uncaught_exceptions:
             sys.excepthook = self._log_uncaught_exceptions
@@ -111,18 +119,18 @@ class GLogging(object):
         return public
 
     def _add_stream_handler(self):
-        colour_formatter = ColouredFormatter(SCREEN_FORMAT)
+        colour_formatter = ColouredFormatter(self.screen_format)
         log_stream = logging.StreamHandler(sys.stdout)
         log_stream.set_name('screen')
         log_stream.setFormatter(colour_formatter)
         self._logger.addHandler(log_stream)
 
-    def _add_file_handler(self):
-        log_filename = path_join(self.log_dir, '{}.log'.format(self._logger.name))
+    def _add_file_handler(self, logdir):
+        log_filename = path_join(logdir, '{}.log'.format(self._logger.name))
         ensure_path_exists(log_filename)
         log_filehandler = AllWriteRotatingFileHandler(log_filename, 'a', FIVEMB, 10)
 
-        formatter = logging.Formatter(FILE_FORMAT)
+        formatter = logging.Formatter(self.file_format)
         log_filehandler.set_name('file')
         log_filehandler.setFormatter(formatter)
         self._logger.addHandler(log_filehandler)
