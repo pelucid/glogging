@@ -7,7 +7,7 @@ import sys
 import os
 from os.path import join as path_join
 
-from glogging.memory_filter import ResourceMetricsFilter
+from resource_metrics import ResourceMetricsFilter
 
 FIVEMB = 5*1024*1024
 
@@ -34,7 +34,7 @@ LOG_LEVELS = {
     'CRITICAL': STYLES['bright'] + COLOURS['yellow'] + COLOURS['back_red']
 }
 
-SCREEN_FORMAT = "%(asctime)s [%(levelname)s]  %(message)s " + "(" + \
+SCREEN_FORMAT = "%(asctime)s [%(levelname)s] %(message)s (" + \
                 STYLES['bright'] + "%(filename)s" + \
                 STYLES['reset'] + ":%(lineno)d)"
 FILE_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
@@ -72,7 +72,7 @@ class GLogging(object):
     """
 
     def __init__(self, logname="growthintel", logdir=None, log_to_screen=True,
-                 log_uncaught_exceptions=True):
+                 log_uncaught_exceptions=True, metrics=False):
         """Initialise logger with desired handlers.
 
         Arguments:
@@ -81,13 +81,12 @@ class GLogging(object):
             log_to_screen (bool): log to stream handler (stdout)
             log_uncaught_exceptions (bool): log uncaught exceptions
         """
-        self.logname = logname
-        self.logger = logging.getLogger(logname)
-        self._configure(logdir, log_to_screen, log_uncaught_exceptions)
+        self._logger = logging.getLogger(logname)
+        self._configure(logdir, log_to_screen, log_uncaught_exceptions, metrics)
 
-    def _configure(self, logdir, log_to_screen, log_uncaught_exceptions):
+    def _configure(self, logdir, log_to_screen, log_uncaught_exceptions, metrics):
         # Logger already exists with configured handlers so just return
-        if self.logger.handlers:
+        if self._logger.handlers:
             return
 
         if logdir:
@@ -96,29 +95,37 @@ class GLogging(object):
         if log_to_screen:
             self._add_stream_handler()
 
+        if metrics:
+            self._logger.addFilter(ResourceMetricsFilter)
+
         if log_uncaught_exceptions:
             sys.excepthook = self._log_uncaught_exceptions
 
     def __getattr__(self, name):
         """Delegate methods to logger."""
-        return self.logger.__getattribute__(name)
+        return self._logger.__getattribute__(name)
+
+    def __dir__(self):
+        methods = dir(self._logger)
+        public = [m for m in methods if not m.startswith('_')]
+        return public
 
     def _add_stream_handler(self):
         colour_formatter = ColouredFormatter(SCREEN_FORMAT)
         log_stream = logging.StreamHandler(sys.stdout)
         log_stream.set_name('screen')
         log_stream.setFormatter(colour_formatter)
-        self.logger.addHandler(log_stream)
+        self._logger.addHandler(log_stream)
 
     def _add_file_handler(self):
-        log_filename = path_join(self.log_dir, '{}.log'.format(self.logger.name))
+        log_filename = path_join(self.log_dir, '{}.log'.format(self._logger.name))
         ensure_path_exists(log_filename)
         log_filehandler = AllWriteRotatingFileHandler(log_filename, 'a', FIVEMB, 10)
 
         formatter = logging.Formatter(FILE_FORMAT)
         log_filehandler.set_name('file')
         log_filehandler.setFormatter(formatter)
-        self.logger.addHandler(log_filehandler)
+        self._logger.addHandler(log_filehandler)
 
     def _log_uncaught_exceptions(self, exc_type, exc_value, exc_traceback):
         self.critical('UNCAUGHT EXCEPTION',
@@ -127,7 +134,7 @@ class GLogging(object):
     def setLevel(self, level):
         if isinstance(level, str):
             level = level.upper()
-        self.logger.setLevel(level)
+        self._logger.setLevel(level)
 
     def setLogLevel(self, level):
         self.setLevel(level)
