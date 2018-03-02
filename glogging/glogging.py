@@ -7,6 +7,8 @@ import sys
 import os
 from os.path import join as path_join
 
+from glogging.memory_filter import ResourceMetricsFilter
+
 FIVEMB = 5*1024*1024
 
 # escape codes for colours from:
@@ -65,57 +67,50 @@ class AllWriteRotatingFileHandler(logging.handlers.RotatingFileHandler):
 
 
 class GLogging(object):
-    """Custom logging class.
+    """Sensible logging class.
        Sets up coloured logging to screen and a file handler.
     """
 
-    def __init__(self, logname="shoover", logdir=None, log_to_screen=True,
+    def __init__(self, logname="growthintel", logdir=None, log_to_screen=True,
                  log_uncaught_exceptions=True):
         """Initialise logger with desired handlers.
 
         Arguments:
-            logname (str): name for the logger
-            logdir (str): name of the directory to log to. If none is passed
-                           then no file handler is created
-            log_to_screen (bool)
-            log_uncaught_exceptions (bool): whether to log uncaught exceptions
-                                            instead of just writing to stderr
+            logname (str): name of the logger (used in file logging)
+            logdir (str): directory to log to - if none then no file handler created
+            log_to_screen (bool): log to stream handler (stdout)
+            log_uncaught_exceptions (bool): log uncaught exceptions
         """
-        self.log_dir = logdir
-        self.logger = self._create_logger(logname)
-        self._setup_logging_levels()
+        self.logname = logname
+        self.logger = logging.getLogger(logname)
+        self._configure(logdir, log_to_screen, log_uncaught_exceptions)
+
+    def _configure(self, logdir, log_to_screen, log_uncaught_exceptions):
+        # Logger already exists with configured handlers so just return
+        if self.logger.handlers:
+            return
 
         if logdir:
-            self._setup_file_handler()
+            self._add_file_handler()
 
         if log_to_screen:
-            self._setup_stream_handler()
+            self._add_stream_handler()
 
         if log_uncaught_exceptions:
             sys.excepthook = self._log_uncaught_exceptions
 
-    def _create_logger(self, log_name):
-        return logging.getLogger(log_name)
+    def __getattr__(self, name):
+        """Delegate methods to logger."""
+        return self.logger.__getattribute__(name)
 
-    def _setup_logging_levels(self):
-        # 'inherit' the logging functionality
-        self.debug = self.logger.debug
-        self.info = self.logger.info
-        self.warning = self.logger.warning
-        self.critical = self.logger.critical
-        self.error = self.logger.error
-        self.exception = self.logger.exception
-
-    def _setup_stream_handler(self):
+    def _add_stream_handler(self):
         colour_formatter = ColouredFormatter(SCREEN_FORMAT)
-
-        log_stream = logging.StreamHandler()
+        log_stream = logging.StreamHandler(sys.stdout)
         log_stream.set_name('screen')
         log_stream.setFormatter(colour_formatter)
-
         self.logger.addHandler(log_stream)
 
-    def _setup_file_handler(self):
+    def _add_file_handler(self):
         log_filename = path_join(self.log_dir, '{}.log'.format(self.logger.name))
         ensure_path_exists(log_filename)
         log_filehandler = AllWriteRotatingFileHandler(log_filename, 'a', FIVEMB, 10)
@@ -123,7 +118,6 @@ class GLogging(object):
         formatter = logging.Formatter(FILE_FORMAT)
         log_filehandler.set_name('file')
         log_filehandler.setFormatter(formatter)
-
         self.logger.addHandler(log_filehandler)
 
     def _log_uncaught_exceptions(self, exc_type, exc_value, exc_traceback):
@@ -136,8 +130,6 @@ class GLogging(object):
         self.logger.setLevel(level)
 
     def setLogLevel(self, level):
-        if isinstance(level, str):
-            level = level.upper()
         self.setLevel(level)
 
     @staticmethod
@@ -146,9 +138,7 @@ class GLogging(object):
 
 
 def getLoggerFromPath(logpath="/dev/null/shoover", log_uncaught_exceptions=True):
-    """
-    Convenience method for splitting a full path into a directory and file
-    """
+    """Convenience method for splitting a full path into a directory and file"""
     log_split_pos = logpath.rfind('/') + 1
 
     return GLogging(logname=logpath[log_split_pos:],
