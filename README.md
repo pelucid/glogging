@@ -1,3 +1,9 @@
-# GI Logger
+# GLogging - GrowthIntel Logging
 
-Repo champ = Jasna
+Sensible logging defaults.
+
+Optionally configure logging to file, screen and logging memory metrics.
+
+## Usage
+
+
