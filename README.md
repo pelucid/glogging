@@ -22,6 +22,11 @@ will produce:
 2018-03-04 18:28:42,035 [INFO] Some log info (test_glog.py:10)
 2018-03-04 18:28:42,035 [DEBUG] I want some extra info: API - more debug info (test_glog.py:11)
 ```
+You can turn off logging to screen by passing the kwarg `log_to_screen`:
+```python
+log = glogging.GLogging(log_to_screen=False)
+```
+
 ### Logging to screen and file
 
 If you pass in the `logdir` kwarg, then you get file output. The default logfile name is `growthintel.log`. NB file output does not include source code references:
