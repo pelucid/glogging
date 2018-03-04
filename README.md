@@ -40,10 +40,15 @@ You can customise the logger name / filename, by passing a `logname` kwarg:
 ```python
 log = glogging.GLogging(logname='mylogfile_010118', logdir='/var/log/api')
 ```
+If you prefer, you can use `getLoggerFromPath` to supply the full path:
+```python
+glogging.getLoggerFromPath('/var/log/api/mylogfile'
+```
 
 ### Logging Resource Usage Metrics
 
-You can log useful system resource usage metrics by default. Set the `log_metrics` kwarg to `True`
+You can log useful system resource usage metrics by default. Set the `log_metrics` kwarg to `True`.
+This will log CPU percentage and RAM memory usage.
 
 ```python
 import glogging
@@ -53,5 +58,5 @@ log.info("Some log info")
 will produce:
 
 ```bash
-2018-03-04 18:39:31,263 [INFO] Mem:11.7MB - Some log info (test_glog.py:10)
+2018-03-04 18:39:31,263 [INFO] Mem:11.7MB CPU:13.1% - Some log info (test_glog.py:10)
 ```
