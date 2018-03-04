@@ -35,7 +35,7 @@ LOG_LEVELS = {
 }
 
 BASE = "%(asctime)s [%(levelname)s]"
-METRICS = "Mem:%(memory)s"
+METRICS = "Mem:%(memory)s CPU:%(cpu)s"
 MSG = "%(message)s"
 CODE = "("+ STYLES['bright'] + "%(filename)s" + STYLES['reset'] + ":%(lineno)d)"
 
@@ -153,13 +153,13 @@ class GLogging(object):
         return logging.getLogger(name)
 
 
-def getLoggerFromPath(logpath="/dev/null/shoover", log_uncaught_exceptions=True):
+def getLoggerFromPath(logpath="/dev/null/growthintel", **kwargs):
     """Convenience method for splitting a full path into a directory and file"""
     log_split_pos = logpath.rfind('/') + 1
 
     return GLogging(logname=logpath[log_split_pos:],
                     logdir=logpath[:log_split_pos],
-                    log_uncaught_exceptions=log_uncaught_exceptions)
+                    **kwargs)
 
 
 def ensure_path_exists(path):

@@ -11,4 +11,5 @@ class ResourceMetricsFilter(logging.Filter):
     def filter(self, record):
         mem_usage = self.proc.memory_info()
         record.memory = '{:.1f}MB'.format(mem_usage.rss / (2.0**20))
+        record.cpu = '{:.1f}%'.format(self.proc.cpu_percent())
         return True
