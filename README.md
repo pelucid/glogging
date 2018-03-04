@@ -24,7 +24,7 @@ will produce:
 ```
 ### Logging to screen and file
 
-If you pass in a logdir, then you get file output. The default logfile name is `growthintel.log`. NB file output does not include source code references:
+If you pass in the `logdir` kwarg, then you get file output. The default logfile name is `growthintel.log`. NB file output does not include source code references:
 
 ```python
 import glogging
@@ -36,7 +36,7 @@ will produce:
 2018-03-04 18:28:42,035 [INFO] Some log info
 2018-03-04 18:28:42,035 [DEBUG] I want some extra info: API - more debug info
 ```
-You can customise the logger name / filename, by passing a `logname` param:
+You can customise the logger name / filename, by passing a `logname` kwarg:
 ```python
 log = glogging.GLogging(logname=mylogfile_010118, logdir='/var/log/api')
 ```
