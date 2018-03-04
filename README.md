@@ -42,7 +42,9 @@ log = glogging.GLogging(logname='mylogfile_010118', logdir='/var/log/api')
 ```
 If you prefer, you can use `getLoggerFromPath` to supply the full path:
 ```python
-glogging.getLoggerFromPath('/var/log/api/mylogfile'
+glogging.getLoggerFromPath('/var/log/api/mylogfile')
+# You can supply additional kwargs for GLogging
+glogging.getLoggerFromPath('/var/log/api/mylogfile', log_metrics=True)
 ```
 
 ### Logging Resource Usage Metrics
