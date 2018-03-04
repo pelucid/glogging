@@ -1,9 +1,9 @@
 # GLogging - GrowthIntel Logging
 
-Sensible logging defaults.
+Sets sensible logging defaults.
 Wraps a standard Python logger and delegates method calls to it.
 
-Optionally configure logging to file, screen and logging memory metrics.
+Optionally configure logging to file and logging memory metrics.
 
 ## Usage
 
