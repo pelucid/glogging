@@ -38,7 +38,7 @@ will produce:
 ```
 You can customise the logger name / filename, by passing a `logname` kwarg:
 ```python
-log = glogging.GLogging(logname=mylogfile_010118, logdir='/var/log/api')
+log = glogging.GLogging(logname='mylogfile_010118', logdir='/var/log/api')
 ```
 
 ### Logging Resource Usage Metrics
