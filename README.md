@@ -50,6 +50,7 @@ import glogging
 log = glogging.GLogging(log_metrics=True)
 log.info("Some log info")
 ```
+will produce:
 
 ```bash
 2018-03-04 18:39:31,263 [INFO] Mem:11.7MB - Some log info (test_glog.py:10)
