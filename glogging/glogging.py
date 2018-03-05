@@ -47,6 +47,7 @@ FILE_METRICS_FORMAT = BASE + " " + METRICS + " - " + MSG
 class GLogException(Exception):
     pass
 
+
 class ColouredFormatter(logging.Formatter):
     """Class for colouring logging messages."""
 
