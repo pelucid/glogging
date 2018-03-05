@@ -89,4 +89,3 @@ If you have created multiple loggers in your app, you must supply the logname:
 ```python
 glog = GLogging.getLogger("my_log_4569456")
 ```
-
