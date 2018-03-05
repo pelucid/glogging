@@ -67,3 +67,26 @@ will produce:
 ```bash
 2018-03-04 18:39:31,263 [INFO] Mem:11.7MB CPU:13.1% - Some log info (test_glog.py:10)
 ```
+
+### Retrieving Logger Singletons
+
+You can create a glogging logger like this:
+```python
+import glogging
+logname = "my_log_{0}".format(4569456)
+glog = glogging.GLogging(logname=logname)
+```
+
+If you only create one logger in your application, then you can easily retrieve it anywhere in the app with:
+```python
+from glogging import GLogging
+# retrieves the "my_log_4569456" logger
+glog = GLogging.getLogger()
+```
+This is convenient if you don't want to pass lognames / loggers around your app.
+
+If you have created multiple loggers in your app, you must supply the logname:
+```python
+glog = GLogging.getLogger("my_log_4569456")
+```
+
