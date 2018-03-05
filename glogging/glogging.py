@@ -44,6 +44,9 @@ SCREEN_METRICS_FORMAT = BASE + " " + METRICS + " - " + MSG + " " + CODE
 FILE_FORMAT = BASE + " " + MSG
 FILE_METRICS_FORMAT = BASE + " " + METRICS + " - " + MSG
 
+class GLogException(Exception):
+    pass
+
 class ColouredFormatter(logging.Formatter):
     """Class for colouring logging messages."""
 
@@ -76,6 +79,7 @@ class GLogging(object):
     """
     screen_format = SCREEN_FORMAT
     file_format = FILE_FORMAT
+    _gloggers = {}
 
     def __init__(self, logname="growthintel", logdir=None, log_to_screen=True,
                  log_uncaught_exceptions=True, log_metrics=False):
@@ -88,6 +92,8 @@ class GLogging(object):
             log_uncaught_exceptions (bool): log uncaught exceptions
             log_metrics (bool): Log memory metrics
         """
+        # Set class lookup - used to retrieve references to gloggers
+        GLogging._gloggers[logname] = self
         self._logger = logging.getLogger(logname)
         self._configure(logdir, log_to_screen, log_uncaught_exceptions, log_metrics)
 
@@ -148,9 +154,17 @@ class GLogging(object):
     def setLogLevel(self, level):
         self.setLevel(level)
 
-    @staticmethod
-    def getLogger(name):
-        return logging.getLogger(name)
+    @classmethod
+    def getLogger(cls, name=None):
+        if name is not None:
+            return cls._gloggers[name]
+
+        glogs = cls._gloggers.values()
+        if len(glogs) > 1:
+            raise GLogException("Multiple GLoggers created, please specify name")
+
+        if glogs:
+            return glogs[0]
 
 
 def getLoggerFromPath(logpath="/dev/null/growthintel", **kwargs):
