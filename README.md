@@ -1,3 +1,4 @@
+
 # GLogging - GrowthIntel Logging
 
 Sets sensible logging defaults.
