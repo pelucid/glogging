@@ -7,7 +7,7 @@ import sys
 import os
 from os.path import join as path_join
 
-from resource_metrics import ResourceMetricsFilter
+from .resource_metrics import ResourceMetricsFilter
 
 FIVEMB = 5*1024*1024
 
@@ -160,7 +160,7 @@ class GLogging(object):
         if name is not None:
             return cls._gloggers[name]
 
-        glogs = cls._gloggers.values()
+        glogs = list(cls._gloggers.values())
         if len(glogs) > 1:
             raise GLogException("Multiple GLoggers created, please specify name")
 
