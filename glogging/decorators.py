@@ -31,12 +31,15 @@ def timeit(identity=None, logger=None):
     return wrap
 
 
-def profile_it(filename):
+def profile_it(filename, enabled=True):
     """Run cProfile over function (and all called functions)
 
     Outputs a profile file in the current working directory"""
+
     def profiled(func):
         def wrapper(*args, **kwargs):
+            if not enabled:
+                return func(*args, **kwargs)
             profile = cProfile.Profile()
             try:
                 profile.enable()
