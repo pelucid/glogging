@@ -5,4 +5,4 @@ setup(name='glogging',
       description='GI logger',
       url='http://github.com/pelucid/glogging',
       packages=['glogging'],
-      install_requires=['psutil==5.4.3'])
+      install_requires=['psutil==5.6.6'])
