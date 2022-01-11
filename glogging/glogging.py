@@ -6,6 +6,7 @@ import logging.handlers
 import sys
 import os
 from os.path import join as path_join
+from distutils.util import strtobool
 
 from .resource_metrics import ResourceMetricsFilter
 
@@ -108,7 +109,10 @@ class GLogging(object):
             self.screen_format = SCREEN_METRICS_FORMAT
             self.file_format = FILE_METRICS_FORMAT
 
-        if logdir:
+        # Use an env variable so any app can control file based logging
+        # --> useful if running apps in Fargate Docker
+        log_to_file_env = strtobool(os.environ.get("LOG_TO_FILE", "true").lower())
+        if logdir and log_to_file_env:
             self._add_file_handler(logdir)
 
         if log_to_screen:
