@@ -30,6 +30,9 @@ log = glogging.GLogging(log_to_screen=False)
 
 ### Logging to screen and file
 
+Note: File logging can be controlled globally by setting the `LOG_TO_FILE` env variable - setting to false
+will override the setting below, and not log to file.
+
 If you pass in the `logdir` kwarg, then you get file output. The default logfile name is `growthintel.log`. NB file output does not include source code references:
 
 ```python
