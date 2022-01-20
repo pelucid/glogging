@@ -1,0 +1,25 @@
+language: python
+python:
+  - "2.7"
+  - "3.6"
+  - "3.9"
+
+install:
+  - make deps
+
+script:
+  - make test
+
+dist: bionic
+
+env: GI_ENV=TEST PYTHONPATH=$TRAVIS_BUILD_DIR/..:$PYTHONPATH
+
+notifications:
+  email:
+    recipients:
+      - developers@growthintel.com
+    on_success: never
+    on_failure: change
+  slack:
+    rooms:
+      secure: "g7EHaGikwSWLrNm6bCJO9FGhX991NnjhU/HMzn9SVDJPS+IE1yMqvEsxyLFCrbZzO8kU0pLwj9xuN6xi6itQbcSFRFCnpaxOJg6ySOv0bWxo+rY3Jxg4mxrSNREM7rvCSbWnRTG3IZtsXzTK5EvD7bET1PKoQfaBXihh6WzyKwKOy+P1+BX2V/oZVL+8Vz9G1ES1+IBoFNcxvR7WArbUNjI6n0LgqznRZyZTiDmWAuTTn23/Jr3oDXuNMpbU16aTixUxg5y80GPZ5ahTNp4iUY/U0ARDkvqA/f+31oF8EcWD5i8//cgR36e3uqoNTJVBCfhlizxIRCs0v202Legvn5j9ODBMlkQu0WwuUUyXueRVWApmojKxj4iFW6thMN0okkREHPmyH7MXRjsP0t2eMdI8sfXREfwa2jwnficoX/Xr6ZKSMjQ17Y+xln4yYE9UfavRaiBIXqiE+b23CvR8ceQrkYz1JNB73QezeeLDBUx/OzN6KcUo0reChez9FCE4TQPG4o4SNWkSX7UIL0Zy/Zu4jupUR5MdmPhyF6goTWs5F466U4Nr3wQUwVPc6mtU0GY1OzJi5KG8nZ/J30rbwo69yUhPzBJxo2gZ0VY8qCCAjYmkCnpAa2lpsU9YJqBWnP/0FQQUhK0VlSClI+oGp49QhWusaptBcxmpl4wKO7k="
