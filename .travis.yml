@@ -2,14 +2,7 @@ language: python
 python:
   - "2.7"
   - "3.6"
-  - "3.8"
   - "3.9"
-
-jobs:
-  allow_failures:
-    - python: 3.8
-    - python: 3.9
-  fast_finish: true
 
 install:
   - make deps
