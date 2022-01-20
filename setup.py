@@ -15,7 +15,7 @@ else:
     requirements += py3_requirements
 
 setup(name='glogging',
-      version='0.5',
+      version='0.5.1',
       description='GI logger',
       url='http://github.com/pelucid/glogging',
       packages=['glogging'],
