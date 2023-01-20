@@ -4,7 +4,7 @@ from setuptools import setup
 requirements = []
 
 py3_requirements = [
-    'psutil==5.6.6'
+    'psutil==5.9.4'
 ]
 
 if sys.version_info[0] == 2:
