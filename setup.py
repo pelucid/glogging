@@ -4,7 +4,8 @@ from setuptools import setup
 requirements = []
 
 py3_requirements = [
-    'psutil==5.6.6'
+    'psutil==5.6.6',
+    'pytest-mock==3.6.1'
 ]
 
 if sys.version_info[0] == 2:
