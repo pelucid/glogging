@@ -16,7 +16,7 @@ else:
     requirements += py3_requirements
 
 setup(name='glogging',
-      version='0.5.2',
+      version='0.5.3',
       description='GI logger',
       classifiers=['Programming Language :: Python :: 2.7',
                    'Programming Language :: Python :: 3.6',
