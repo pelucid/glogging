@@ -183,5 +183,7 @@ def getLoggerFromPath(logpath="/dev/null/growthintel", **kwargs):
 
 def ensure_path_exists(path):
     dir = os.path.dirname(path)
-    if not os.path.exists(dir):
+    try:
         os.makedirs(dir)
+    except OSError:
+        pass
